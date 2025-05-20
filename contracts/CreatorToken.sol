@@ -10,6 +10,7 @@ contract CreatorToken is ERC20, Ownable {
         ERC20(_name, _symbol)
         Ownable(_owner)
     {
+        
          uint  initialSupplyWithDecimals = _initialSupply * (10**18);
          _mint(_owner, initialSupplyWithDecimals);
          _transferOwnership(_owner);

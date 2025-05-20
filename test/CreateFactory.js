@@ -86,11 +86,56 @@ describe("CreateFactory", function () {
        const tokenMetaData = await creatorFactory.tokenMetadata(tokensAddress[0]);
         console.log("tokenMetaData",tokenMetaData );
 
-       expect(tokenMetaData.length).to.not.equal(0);
+        expect(tokenMetaData.name).to.equal("Test1");
+        expect(tokenMetaData.symbol).to.equal("T1");
+        expect(tokenMetaData.tokenAddress).to.equal(tokensAddress[0]);
+        
 
     });
+    it("should emit an event on successful token creation", async function(){
+      const { creatorFactory } = await loadFixture(deployERC20Factory);
+
+      await expect(creatorFactory.createToken("Test1", "T1", 100))
+      .to.emit(creatorFactory, "tokenDeployed")
+      .withArgs(anyValue, anyValue, "Test1", "T1" );
+    })
+    it("should limit the token by a particular creator to 5", async function(){
+      const { creatorFactory } = await loadFixture(deployERC20Factory);
+
+      for (let i = 0; i < 5; i++) {
+        await creatorFactory.createToken(`Token${i}`, `TK${i}`, 100);
+      }
+      
+      const tokens = await creatorFactory.allTokens();
+      console.log("token length",tokens.length );
+      await expect(tokens.length).to.equal(5);
+
+
+      await expect(creatorFactory.createToken("Test6", "T6", 100))
+      .revertedWith("Token creation limit reached");
+    })
 
    
   });
+
+  describe("should revert back if token data not provided", function(){
+    it("should revert back if name of token not provided", async function(){
+      const { creatorFactory } = await loadFixture(deployERC20Factory);
+
+      await expect(creatorFactory.createToken("", "T1", 100)).revertedWith("Token name cannot be empty");
+    })
+    it("should revert back if symbol of token not provided", async function(){
+      const { creatorFactory } = await loadFixture(deployERC20Factory);
+
+      await expect(creatorFactory.createToken("Test", "", 100)).revertedWith("Token symbol cannot be empty");
+    })
+    it("should revert back if intial supply not provided", async function(){
+      const { creatorFactory } = await loadFixture(deployERC20Factory);
+
+      await expect(creatorFactory.createToken("Test", "T1", 0)).revertedWith("Initial supply cannot be empty");
+    })
+  })
+
+  
  
 });

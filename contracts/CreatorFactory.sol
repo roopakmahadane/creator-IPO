@@ -6,6 +6,7 @@ import 'hardhat/console.sol';
 contract CreatorFactory {
 
     address[] public creatorTokens; 
+    uint public constant MAX_TOKENS_PER_USER = 5;
     struct TokenData {
         address tokenAddress;
         string name;
@@ -17,12 +18,15 @@ contract CreatorFactory {
     event tokenDeployed(address indexed creator, address indexed tokenAddress, string indexed name, string symbol);
 
     function createToken(string memory _name, string memory _symbol, uint _initialSupply) external{
+        require(bytes(_name).length > 0, "Token name cannot be empty");
+        require(bytes(_symbol).length > 0, "Token symbol cannot be empty");
+        require(_initialSupply > 0, "Initial supply cannot be empty");
+        require(tokenByCreator[msg.sender].length < MAX_TOKENS_PER_USER, "Token creation limit reached");
         CreatorToken newToken = new CreatorToken(msg.sender, _name, _symbol, _initialSupply);
         address tokenAddress = address(newToken);
-        console.log("inside createToken", tokenAddress);
         creatorTokens.push(tokenAddress);
-        console.log("inside createToken", creatorTokens.length);
         tokenByCreator[msg.sender].push(tokenAddress);
+        console.log("Post-push token count:", tokenByCreator[msg.sender].length);
         tokenMetadata[tokenAddress] = TokenData(tokenAddress,_name,_symbol);
         emit tokenDeployed(msg.sender, tokenAddress, _name, _symbol);
     }
