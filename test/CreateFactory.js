@@ -35,10 +35,10 @@ describe("CreateFactory", function () {
       const { creatorFactory } = deployFactory;
       const tokensLengthBefore = await creatorFactory.allTokens();
 
-       const tx1 = await creatorFactory.createToken("RoopakToken", "RPK", 100);
+       const tx1 = await creatorFactory.createToken("RoopakToken1", "RPK1", 100);
        await tx1.wait();
 
-       const tx2 = await creatorFactory.createToken("RoopakToken", "RPK", 100);
+       const tx2 = await creatorFactory.createToken("RoopakToken2", "RPK2", 100);
        await tx2.wait();
 
        const tokensLengthAfter = await creatorFactory.allTokens();
@@ -105,14 +105,34 @@ describe("CreateFactory", function () {
       for (let i = 0; i < 5; i++) {
         await creatorFactory.createToken(`Token${i}`, `TK${i}`, 100);
       }
-      
+
       const tokens = await creatorFactory.allTokens();
       console.log("token length",tokens.length );
-      await expect(tokens.length).to.equal(5);
+      expect(tokens.length).to.equal(5);
 
 
       await expect(creatorFactory.createToken("Test6", "T6", 100))
       .revertedWith("Token creation limit reached");
+    })
+
+    it("should revert back if same token name is used", async function(){
+      const deployFactory = await deployERC20Factory();
+      const { creatorFactory } = deployFactory;
+
+      const tx = await creatorFactory.createToken("Test1", "T1", 100);
+      
+      await expect(creatorFactory.createToken("Test1", "T2", 100))
+      .revertedWith("Token name already used");
+    })
+
+    it("should revert back if same token symbol is used", async function(){
+      const deployFactory = await deployERC20Factory();
+      const { creatorFactory } = deployFactory;
+
+      const tx = await creatorFactory.createToken("Test1", "T2", 100);
+      
+      await expect(creatorFactory.createToken("Test2", "T2", 100))
+      .revertedWith("Token symbol already used");
     })
 
    

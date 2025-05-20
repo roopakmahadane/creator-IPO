@@ -14,6 +14,9 @@ contract CreatorFactory {
     }
     mapping(address => address[]) tokenByCreator;
     mapping(address => TokenData) public tokenMetadata;
+    mapping(string => bool) private usedNames;
+    mapping(string => bool) private usedSymbols;
+
 
     event tokenDeployed(address indexed creator, address indexed tokenAddress, string indexed name, string symbol);
 
@@ -22,7 +25,12 @@ contract CreatorFactory {
         require(bytes(_symbol).length > 0, "Token symbol cannot be empty");
         require(_initialSupply > 0, "Initial supply cannot be empty");
         require(tokenByCreator[msg.sender].length < MAX_TOKENS_PER_USER, "Token creation limit reached");
+        require(!usedNames[_name], "Token name already used");
+        require(!usedSymbols[_symbol], "Token symbol already used");
+
         CreatorToken newToken = new CreatorToken(msg.sender, _name, _symbol, _initialSupply);
+        usedNames[_name] = true;
+        usedSymbols[_symbol] = true;
         address tokenAddress = address(newToken);
         creatorTokens.push(tokenAddress);
         tokenByCreator[msg.sender].push(tokenAddress);
