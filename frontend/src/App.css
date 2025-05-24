@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* Hide scrollbar */
+.scrollbar-hidden {
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
 /* #root {
   max-width: 1280px;
   margin: 0 auto;
