@@ -1,3 +1,5 @@
+
+
 export default function CreatorCard({creator}){
         
     const {

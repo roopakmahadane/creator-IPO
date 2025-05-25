@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import  getFarcasterIdentity  from "../../../utils/farcaster.js";
+import { useWallet } from "../context/WalletContext.jsx";
+
 
 const WalletConnect = () => {
-  const [walletAddress, setWalletAddress] = useState("");
+  const { setWalletAddress, walletAddress } = useWallet();
 
   useEffect(() => {
     const wasConnected = sessionStorage.getItem("walletConnected");
@@ -24,7 +25,7 @@ const WalletConnect = () => {
         sessionStorage.setItem("walletConnected", "true");
       
       } else {
-        setWalletAddress("");
+        setWalletAddress(null);
         sessionStorage.removeItem("walletConnected");
       }
     };
@@ -40,7 +41,7 @@ const WalletConnect = () => {
         window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
       }
     };
-  }, []);
+  }, [setWalletAddress]);
 
   const connectWallet = async () => {
     if (window.ethereum) {

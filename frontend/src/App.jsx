@@ -1,19 +1,27 @@
-import { useState } from 'react'
+import Layout from "./Layout"
+import { CreateToken } from "./components/CreateToken";
+import Home from "./components/Home";
+import {createBrowserRouter, RouterProvider} from 'react-router-dom';
 
-import './App.css';
-import './components/Header'
-import Header from './components/Header';
-import TopCreators from './components/TopCreators';
 
 
 function App() {
 
 
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Layout />,
+      children: [
+        { path: "", element: <Home /> },
+        { path: "createToken", element: <CreateToken /> }
+      ]
+    }
+  ]);
+
+
   return (
-    <div className='min-h-screen bg-black text-white'>
-      <Header />
-    <TopCreators />
-    </div>
+    <RouterProvider router={router} />
   )
 }
 
