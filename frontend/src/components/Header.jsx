@@ -1,4 +1,8 @@
-import WalletConnect from "./WalletConnect";
+import { ConnectKitButton } from "connectkit";
+import { LensLogin } from "./LensLogin";
+
+
+
 
 
 const Header = () =>  {
@@ -11,8 +15,10 @@ const Header = () =>  {
             <h2 className="text-white">v1.0</h2>
             </div>
             </div>
-            
-            <WalletConnect />
+            <div className="m-5">
+            <ConnectKitButton />
+            </div>
+          
         </div>
     )
 }
